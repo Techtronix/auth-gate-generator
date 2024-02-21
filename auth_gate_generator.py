@@ -75,40 +75,25 @@ def main():
     # InspIRCd will not accept name collisions
     class_name = f"auth-gate-{uuid.uuid4()}"
 
+    # The IP list needs to be converted into a string separated by space
+    ip_str = " ".join(ip_addresses)
+
     # There will need to be two connect blocks:
     # 1. Allow registered connections with authentication
     # 2. Deny registered connections without authentication
-
-    # The following strings will store the allow="" and deny="" entries
-    allow = ""
-    deny = ""
-
-    # Build up allow and deny strings with formatting included
-    for i, ip in enumerate(ip_addresses):
-        # Yes, I can condense this, but this is better for readability
-        if i < len(ip_addresses) - 1:
-            allow += f'    allow="{ip}"\n'
-            deny += f'    deny="{ip}"\n'
-        else:
-            allow += f'    allow="{ip}"'
-            deny += f'    deny="{ip}"'
-
+    #
     # Final output will look akin to this:
     # <connect name="auth-gate-73494747-e19e-4cdf-bc3b-c0f5b94af2e2"
-    #     allow="x.x.x.x/cidr"
-    #     allow="y.y.y.y/cidr"
+    #     allow="x.x.x.x/cidr y.y.y.y/cidr"
     #     registered="true"
     #     requireaccount="yes"
     #     parent="main">
     # <connect
-    #     deny="x.x.x.x/cidr"
-    #     deny="y.y.y.y/cidr"
+    #     deny="x.x.x.x/cidr y.y.y.y/cidr"
     #     registered="true"
     #     reason="You need to identify via SASL to use this server.">
-    allow_block = f'<connect name="{class_name}"\n{allow}\n    registered="true"\n    requireaccount="yes"\n    parent="{args.parent}">'  # pylint: disable=line-too-long
-    deny_block = (
-        f'<connect\n{deny}\n    registered="true"\n    reason="{args.message}">'
-    )
+    allow_block = f'<connect name="{class_name}"\n    allow="{ip_str}"\n    registered="true"\n    requireaccount="yes"\n    parent="{args.parent}">'  # pylint: disable=line-too-long
+    deny_block = f'<connect\n    deny="{ip_str}"\n    registered="true"\n    reason="{args.message}">'
 
     use_file: bool = len(args.output) != 0
     with open(args.output, "w", encoding="utf8") if use_file else stdout as f:
