@@ -104,7 +104,7 @@ def main():
     #     deny="y.y.y.y/cidr"
     #     registered="true"
     #     reason="You need to identify via SASL to use this server.">
-    allow_block = f'<connect name="{class_name}"\n{allow}\n    registered="true"\n    requireaccount="yes"\n    parent="{args.parent}">'
+    allow_block = f'<connect name="{class_name}"\n{allow}\n    registered="true"\n    requireaccount="yes"\n    parent="{args.parent}">'  # pylint: disable=line-too-long
     deny_block = (
         f'<connect\n{deny}\n    registered="true"\n    reason="{args.message}">'
     )
