@@ -58,6 +58,7 @@ parser.add_argument(
 
 
 def main():
+    """Main"""
     # Parse args
     args = parser.parse_args()
 
